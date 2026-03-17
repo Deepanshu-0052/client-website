@@ -3,54 +3,43 @@ import Message from "../models/Message.js";
 
 const router = express.Router();
 
+// GET all messages
+router.get("/messages", async (req, res) => {
+  try {
+    const messages = await Message.find();
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-// CREATE MESSAGE
-router.post("/",async(req,res)=>{
+// POST message
+router.post("/messages", async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
 
-    try{
+    const newMessage = new Message({
+      name,
+      email,
+      message,
+    });
 
-        const newMessage = new Message(req.body)
+    await newMessage.save();
 
-        await newMessage.save()
+    res.status(201).json(newMessage);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-        res.json({message:"Message saved"})
+// DELETE message
+router.delete("/messages/:id", async (req, res) => {
+  try {
+    await Message.findByIdAndDelete(req.params.id);
+    res.json({ message: "Deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-    }catch(error){
-        res.status(500).json(error)
-    }
-
-})
-
-
-// GET ALL MESSAGES
-router.get("/",async(req,res)=>{
-
-    try{
-
-        const messages = await Message.find().sort({createdAt:-1})
-
-        res.json(messages)
-
-    }catch(error){
-        res.status(500).json(error)
-    }
-
-})
-
-
-// DELETE MESSAGE
-router.delete("/:id",async(req,res)=>{
-
-    try{
-
-        await Message.findByIdAndDelete(req.params.id)
-
-        res.json({message:"Message deleted"})
-
-    }catch(error){
-        res.status(500).json(error)
-    }
-
-})
-
-export default router
+export default router;
