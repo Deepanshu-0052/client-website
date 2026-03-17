@@ -15,7 +15,7 @@ setForm({...form,[e.target.name]:e.target.value})
 const handleSubmit=async(e)=>{
 e.preventDefault()
 
-await fetch("http://localhost:5000/api/messages",{
+await fetch("https://client-backend-yoi5.onrender.com/api/messages",{
 
 method:"POST",
 
